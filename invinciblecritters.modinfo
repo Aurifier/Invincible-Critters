@@ -1,0 +1,12 @@
+{
+  "name": "invinciblecritters",
+  "version": "Beta v. Pleased Giraffe",
+  "path": ".",
+  "metadata": {
+    "displayName": "Invincible Critters",
+    "author": "Aurifier",
+    "description": "Renders critters unkillable.",
+    "support_url": "https://github.com/Aurifier/Invincible-Critters",
+    "version": "1.0.0"
+  }
+}

@@ -1,0 +1,132 @@
+apply plugin: 'java'
+defaultTasks 'build'
+
+def modName = "invinciblecritters"
+
+def critters = [
+    'apexscabcritter',
+    'armadillo',
+    'avianscabcritter',
+    'ballooncritter',
+    'birdcritter',
+    'blipcritter',
+    'bloodtoadcritter',
+    'bouncebagcritter',
+    'bouncercritter',
+    'bowbirdcritter',
+    'breakercritter',
+    'breakerfemalecritter',
+    'bunny',
+    'chevcritter',
+    'cliffcritter',
+    'crabcritter',
+    'deserttortoisecritter',
+    'eyefriend',
+    'eyepodcritter',
+    'fishberrycritter',
+    'fishchilicritter',
+    'fishcritter',
+    'fishlemoncritter',
+    'floatbagcritter',
+    'floranscabcritter',
+    'frog',
+    'froggpolecritter',
+    'glitchscabcritter',
+    'gloopcritter',
+    'glowingballcritter',
+    'glowingballcritter2',
+    'glowingfishcritter',
+    'groopcritter',
+    'gullcritter',
+    'harecritter',
+    'hazmatcritter',
+    'hedgehogcritter',
+    'humanscabcritter',
+    'hylotlscabcritter',
+    'jellocritter',
+    'jellycritter',
+    'leafscabcritter',
+    'maggotcritter',
+    'mousecritter',
+    'owlcritter',
+    'penguinscabcritter',
+    'petalcritter',
+    'poisonfishcritter',
+    'pufferfishcritter',
+    'quibblecritter',
+    'ravencritter',
+    'reasonablecritter',
+    'redbreastcritter',
+    'sackbagcritter',
+    'savybirdcritter',
+    'skellyfishcritter',
+    'slugbluecritter',
+    'slugcritter',
+    'sluggreencritter',
+    'snail',
+    'snakecritter',
+    'snooglecritter',
+    'sporelingcritter',
+    'squeekcritter',
+    'squidcritter',
+    'squirrelcritter',
+    'symbiotecritter',
+    'tinycrocodilecritter',
+    'tortoise',
+    'toucritter',
+    'toxiccrabcritter',
+    'tritrotscritter',
+    'vulturecritter',
+    'wintercritter',
+    'wurmcritter',
+    'yeticritter'
+]
+
+def patchFile = copySpec {
+    from 'critter.patch'
+}
+
+def modInfoFile = copySpec {
+    from "${modName}.modinfo"
+}
+
+task copyPatchesToModDir << {
+    critters.each { critter ->
+        copy {
+            with patchFile
+            rename { critter + '.monstertype.patch' }
+            into "$buildDir/$modName/monsters/critter/" + critter
+        }
+    }
+}
+
+task copyPatches << {
+
+}
+
+critters.each { critter ->
+    def taskName = "copy${critter}Patch"
+    task "$taskName"(type: Copy) {
+        with patchFile
+        rename { critter + '.monstertype.patch' }
+        into "$buildDir/$modName/monsters/critter/" + critter
+    }
+    copyPatches.dependsOn(taskName)
+}
+
+task copyModInfo(type: Copy) {
+    with modInfoFile
+    into "$buildDir/$modName"
+}
+
+def starboundDir = "/home/drew/.steam/steam/SteamApps/common/Starbound"
+task modZip(type: Zip, dependsOn: [copyPatches,copyModInfo]) {
+    from "$buildDir"
+    include "$modName/**"
+    archiveName "${modName}.zip"
+}
+
+artifacts {
+    archives modZip
+}
+
